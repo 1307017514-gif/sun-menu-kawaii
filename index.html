@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>今天吃什么随机抽签</title>
+  <title>小太阳菜单</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23d94c3a'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='34' font-family='Arial, sans-serif' font-weight='700' fill='white'%3E%E9%A3%9F%3C/text%3E%3C/svg%3E">
   <style>
     :root {
@@ -54,7 +54,7 @@
       grid-template-columns: 1fr auto;
       gap: 18px;
       align-items: end;
-      margin-bottom: 22px;
+      margin-bottom: 16px;
     }
 
     .brand {
@@ -118,6 +118,152 @@
       flex-wrap: wrap;
       justify-content: flex-end;
       align-items: center;
+    }
+
+    .gemini-hero {
+      position: relative;
+      min-height: 360px;
+      margin-bottom: 24px;
+      padding: 58px 22px 32px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 32px;
+      background:
+        radial-gradient(circle at 24% 18%, rgba(255, 142, 192, 0.36), transparent 28%),
+        radial-gradient(circle at 78% 20%, rgba(255, 223, 236, 0.92), transparent 32%),
+        radial-gradient(circle at 62% 82%, rgba(255, 245, 222, 0.86), transparent 36%),
+        linear-gradient(135deg, #fffcff 0%, #fff2f8 48%, #fff8ef 100%);
+      border: 1px solid rgba(255, 205, 225, 0.86);
+      box-shadow: 0 28px 70px rgba(232, 91, 153, 0.16);
+    }
+
+    .gemini-hero::before,
+    .gemini-hero::after {
+      content: "";
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      filter: blur(10px);
+      opacity: .58;
+      pointer-events: none;
+      animation: auraFloat 8s ease-in-out infinite;
+    }
+
+    .gemini-hero::before {
+      left: -86px;
+      top: -78px;
+      background: radial-gradient(circle, rgba(255, 118, 177, 0.34), transparent 68%);
+    }
+
+    .gemini-hero::after {
+      right: -92px;
+      bottom: -96px;
+      background: radial-gradient(circle, rgba(255, 219, 160, 0.44), transparent 68%);
+      animation-delay: -3s;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      width: min(760px, 100%);
+      text-align: center;
+    }
+
+    .hero-kicker {
+      margin: 0 0 14px;
+      color: #b77492;
+      font-size: 14px;
+      font-weight: 900;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: clamp(42px, 8vw, 84px);
+      line-height: 1.05;
+      letter-spacing: 0;
+      font-weight: 900;
+      background: linear-gradient(90deg, #f05c9f 0%, #ff9bc8 38%, #d88aff 68%, #ffb067 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .hero-copy {
+      margin: 16px auto 26px;
+      max-width: 560px;
+      color: #9c6b82;
+      font-size: 16px;
+      line-height: 1.8;
+    }
+
+    .prompt-panel {
+      width: min(720px, 100%);
+      margin: 0 auto;
+      padding: 14px;
+      border-radius: 30px;
+      border: 1px solid rgba(255, 197, 222, 0.94);
+      background: rgba(255, 252, 254, 0.86);
+      box-shadow:
+        0 18px 44px rgba(232, 91, 153, 0.14),
+        inset 0 1px 0 rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(14px);
+      text-align: left;
+    }
+
+    .prompt-line {
+      min-height: 48px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 6px 12px;
+      color: #9b657d;
+      font-size: 15px;
+      border-bottom: 1px solid rgba(247, 201, 220, 0.72);
+    }
+
+    .sparkle {
+      width: 34px;
+      height: 34px;
+      flex: 0 0 34px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, #ff75ad, #ffc5dc);
+      box-shadow: 0 8px 18px rgba(232, 91, 153, 0.18);
+      font-weight: 900;
+    }
+
+    .prompt-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding-top: 12px;
+    }
+
+    .prompt-btn {
+      min-height: 40px;
+      padding: 9px 13px;
+      border-radius: 999px;
+      color: #8f5871;
+      background: linear-gradient(180deg, #fffafd, #fff0f7);
+      border: 1px solid #f8c8dc;
+      font-size: 13px;
+      font-weight: 900;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .prompt-btn:hover {
+      animation: softHop 430ms ease;
+      background: linear-gradient(135deg, #ff82b8, #ffd0e3);
+      color: #fff;
+      box-shadow: 0 14px 24px rgba(232, 91, 153, 0.18);
+    }
+
+    .prompt-btn:active {
+      transform: translateY(1px) scale(.98);
     }
 
     .mode-switch {
@@ -728,6 +874,11 @@
       100% { transform: translateY(0) scale(1); }
     }
 
+    @keyframes auraFloat {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(18px, 14px, 0) scale(1.08); }
+    }
+
     @keyframes modalWiggle {
       0% { transform: rotate(0deg) scale(1); }
       35% { transform: rotate(-1.4deg) scale(1.02); }
@@ -755,6 +906,11 @@
         justify-content: flex-start;
       }
 
+      .gemini-hero {
+        min-height: 330px;
+        padding-top: 46px;
+      }
+
       .soup-section {
         position: static;
       }
@@ -774,6 +930,24 @@
         width: 42px;
         height: 42px;
         flex-basis: 42px;
+      }
+
+      .gemini-hero {
+        min-height: 0;
+        border-radius: 26px;
+        padding: 38px 14px 20px;
+      }
+
+      .hero-copy {
+        font-size: 14px;
+      }
+
+      .prompt-panel {
+        border-radius: 24px;
+      }
+
+      .prompt-line {
+        align-items: flex-start;
       }
 
       .section-head,
@@ -820,6 +994,28 @@
         <button class="action-btn" id="clearHistoryBtn" type="button">清空记录</button>
       </div>
     </header>
+
+    <section class="gemini-hero" aria-labelledby="heroTitle">
+      <div class="hero-content">
+        <p class="hero-kicker">今天想吃点什么</p>
+        <h2 class="hero-title" id="heroTitle">你好，小太阳</h2>
+        <p class="hero-copy">像聊天一样点一下，让菜单帮你从早餐、正餐、饮品和汤品里挑一个甜甜的答案。</p>
+
+        <div class="prompt-panel" aria-label="快捷抽签入口">
+          <div class="prompt-line">
+            <span class="sparkle" aria-hidden="true">✦</span>
+            <span>帮我决定现在吃什么，保留下面所有分类和自定义菜单。</span>
+          </div>
+          <div class="prompt-actions">
+            <button class="prompt-btn" type="button" data-quick-draw="breakfast">抽早餐</button>
+            <button class="prompt-btn" type="button" data-quick-draw="cuisine">抽地方菜</button>
+            <button class="prompt-btn" type="button" data-quick-draw="daily">抽简餐</button>
+            <button class="prompt-btn" type="button" data-quick-draw="drink">来杯饮品</button>
+            <button class="prompt-btn" type="button" data-quick-draw="soup">配一碗汤</button>
+          </div>
+        </div>
+      </div>
+    </section>
 
     <div class="layout">
       <div class="main-column">
@@ -1124,7 +1320,8 @@
       prizeKicker: $("#prizeKicker"),
       prizeName: $("#prizeName"),
       prizeNote: $("#prizeNote"),
-      prizeCloseBtn: $("#prizeCloseBtn")
+      prizeCloseBtn: $("#prizeCloseBtn"),
+      promptActions: $(".prompt-actions")
     };
 
     function randomItem(list) {
@@ -1668,6 +1865,16 @@
       $("#drawDrinkBtn").addEventListener("click", () => drawDrink(false));
       $("#drawDrinkAllBtn").addEventListener("click", () => drawDrink(true));
       $("#drawSoupBtn").addEventListener("click", drawSoup);
+      elements.promptActions.addEventListener("click", (event) => {
+        const button = event.target.closest("[data-quick-draw]");
+        if (!button) return;
+        const type = button.dataset.quickDraw;
+        if (type === "breakfast") drawBreakfast(true);
+        if (type === "cuisine") drawCuisine();
+        if (type === "daily") drawDaily(true);
+        if (type === "drink") drawDrink(true);
+        if (type === "soup") drawSoup();
+      });
       $("#clearHistoryBtn").addEventListener("click", () => {
         state.history = [];
         renderHistory();
