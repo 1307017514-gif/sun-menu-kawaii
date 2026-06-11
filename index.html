@@ -1,0 +1,1702 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>今天吃什么随机抽签</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%23d94c3a'/%3E%3Ctext x='32' y='42' text-anchor='middle' font-size='34' font-family='Arial, sans-serif' font-weight='700' fill='white'%3E%E9%A3%9F%3C/text%3E%3C/svg%3E">
+  <style>
+    :root {
+      --bg: #fff6fb;
+      --panel: #fffafc;
+      --panel-soft: #fff1f7;
+      --ink: #684256;
+      --muted: #a7798f;
+      --line: #f6c8dc;
+      --tag: #fff0f7;
+      --tag-line: #f7c9dc;
+      --input: #fffafd;
+      --red: #ff8fbd;
+      --red-dark: #e85b99;
+      --teal: #f6a6c8;
+      --amber: #ffd6e4;
+      --green: #ffa6cc;
+      --cream: #fffdf8;
+      --shadow: 0 18px 42px rgba(226, 88, 150, 0.16);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Microsoft YaHei", "PingFang SC", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        linear-gradient(135deg, rgba(255, 188, 215, 0.38), transparent 34%),
+        linear-gradient(315deg, rgba(255, 239, 247, 0.92), transparent 42%),
+        linear-gradient(180deg, #fff9fc 0%, #ffeef7 54%, #fffaf3 100%),
+        var(--bg);
+      transition: background 220ms ease, color 220ms ease;
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 28px 0 38px;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 22px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-mark {
+      width: 48px;
+      height: 48px;
+      flex: 0 0 48px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--red), var(--amber));
+      box-shadow: 0 10px 22px rgba(232, 91, 153, 0.22);
+      position: relative;
+    }
+
+    .brand-mark::before,
+    .brand-mark::after {
+      content: "";
+      position: absolute;
+      top: -7px;
+      width: 18px;
+      height: 14px;
+      border-radius: 999px 999px 999px 4px;
+      background: #ff6ead;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.48);
+    }
+
+    .brand-mark::before {
+      right: 11px;
+      transform: rotate(28deg);
+    }
+
+    .brand-mark::after {
+      right: -1px;
+      transform: rotate(142deg);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 46px);
+      line-height: 1.05;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .quick-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .mode-switch {
+      display: inline-grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(255, 250, 252, 0.82);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.76);
+    }
+
+    .mode-btn {
+      min-width: 58px;
+      min-height: 34px;
+      border-radius: 999px;
+      padding: 7px 10px;
+      color: var(--muted);
+      background: transparent;
+      font-size: 13px;
+      font-weight: 800;
+      transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+    }
+
+    .mode-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, #ff8fbd, #ffc4dc);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.55fr) minmax(320px, 0.85fr);
+      gap: 18px;
+      align-items: start;
+    }
+
+    .main-column {
+      display: grid;
+      gap: 18px;
+    }
+
+    .section {
+      background: rgba(255, 250, 252, 0.9);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: background 220ms ease, border-color 220ms ease;
+    }
+
+    .section-head {
+      padding: 20px 22px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .section-title {
+      margin: 0;
+      font-size: 21px;
+      line-height: 1.2;
+    }
+
+    .section-note {
+      margin: 5px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .section-index {
+      min-width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-weight: 800;
+      background: linear-gradient(135deg, #ff91bf, #ffd2e2);
+      box-shadow: 0 8px 18px rgba(232, 91, 153, 0.18);
+    }
+
+    .section-body {
+      padding: 20px 22px 22px;
+    }
+
+    .chooser-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(108px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .food-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 34px;
+      margin-top: 14px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      min-height: 30px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--ink);
+      background: rgba(255, 240, 247, 0.92);
+      border: 1px solid var(--tag-line);
+      font-size: 13px;
+    }
+
+    .remove-tag {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, #ff78ae, #ffc1da);
+      font-size: 14px;
+      line-height: 1;
+      font-weight: 900;
+      box-shadow: 0 4px 10px rgba(232, 91, 153, 0.18);
+      transition: transform 160ms ease;
+    }
+
+    .remove-tag:hover {
+      transform: scale(1.12);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    input {
+      width: 100%;
+      min-height: 42px;
+      border-radius: 16px;
+      border: 1px solid var(--line);
+      background: var(--input);
+      color: var(--ink);
+      padding: 10px 12px;
+      outline: none;
+      transition: border-color 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    input:focus {
+      border-color: var(--teal);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--teal) 20%, transparent);
+    }
+
+    .choice-btn,
+    .action-btn {
+      min-height: 42px;
+      border-radius: 999px;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease, color 160ms ease;
+    }
+
+    .choice-btn {
+      padding: 10px 12px;
+      color: var(--ink);
+      background: linear-gradient(180deg, #fff8fb, #ffeef7);
+      border: 1px solid var(--tag-line);
+      font-weight: 700;
+    }
+
+    .choice-btn:hover,
+    .mode-btn:hover {
+      animation: softHop 430ms ease;
+      box-shadow: 0 12px 20px rgba(232, 91, 153, 0.16);
+    }
+
+    .choice-btn:active,
+    .action-btn:active,
+    .mode-btn:active {
+      transform: translateY(1px) scale(0.98);
+    }
+
+    .choice-btn.active {
+      color: #fff;
+      background: linear-gradient(135deg, #ff77ad, #ffb9d4);
+      border-color: var(--red);
+      box-shadow: 0 10px 20px rgba(232, 91, 153, 0.22);
+    }
+
+    .action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 16px;
+      color: #fff;
+      background: linear-gradient(135deg, #ff78ae, #ffaed0);
+      font-weight: 800;
+      box-shadow: 0 12px 20px rgba(232, 91, 153, 0.18);
+      white-space: nowrap;
+    }
+
+    .action-btn:hover {
+      animation: softHop 430ms ease;
+      box-shadow: 0 16px 24px rgba(232, 91, 153, 0.2);
+    }
+
+    .action-btn.secondary {
+      color: #fff;
+      background: linear-gradient(135deg, #ffa1c8, #ffd3e4);
+    }
+
+    .action-btn.ghost {
+      color: var(--ink);
+      background: #fff8fb;
+      border: 1px solid var(--tag-line);
+      box-shadow: none;
+    }
+
+    .action-btn.soup {
+      width: 100%;
+      color: #fff;
+      background: linear-gradient(135deg, #ff8fbd, #ffd3e4);
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .custom-row {
+      display: grid;
+      grid-template-columns: minmax(180px, 1fr) auto;
+      gap: 10px;
+      margin: 16px 0;
+    }
+
+    .result-box {
+      display: grid;
+      gap: 10px;
+      min-height: 294px;
+      padding: 16px;
+      border-radius: var(--radius);
+      background:
+        linear-gradient(135deg, rgba(255, 170, 207, 0.24), transparent 55%),
+        var(--panel-soft);
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+
+    .visual-stage {
+      min-height: 142px;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(135deg, rgba(255, 164, 202, 0.2), transparent 54%),
+        rgba(255, 253, 248, 0.72);
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .result-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .result-main {
+      min-height: 44px;
+      font-size: clamp(26px, 5vw, 42px);
+      line-height: 1.15;
+      font-weight: 900;
+      color: var(--red-dark);
+    }
+
+    .result-meta {
+      color: #b86a8c;
+      font-size: 14px;
+      min-height: 20px;
+    }
+
+    .rolling .result-main {
+      animation: rollText 110ms linear infinite;
+    }
+
+    .finished {
+      animation: popResult 460ms cubic-bezier(.2, .9, .25, 1.25);
+    }
+
+    .wheel-wrap {
+      position: relative;
+      width: 132px;
+      height: 132px;
+      display: grid;
+      place-items: center;
+    }
+
+    .wheel-pointer {
+      position: absolute;
+      top: -4px;
+      left: 50%;
+      width: 0;
+      height: 0;
+      transform: translateX(-50%);
+      border-left: 9px solid transparent;
+      border-right: 9px solid transparent;
+      border-top: 18px solid var(--red);
+      z-index: 2;
+    }
+
+    .draw-wheel {
+      width: 122px;
+      height: 122px;
+      border-radius: 50%;
+      border: 6px solid var(--cream);
+      background:
+        conic-gradient(#ff8fbd 0 45deg, #ffd7e6 45deg 90deg, #ffacd0 90deg 135deg, #fff3f8 135deg 180deg, #ffc4dc 180deg 225deg, #ff9bc5 225deg 270deg, #ffe3ee 270deg 315deg, #ff8fbd 315deg 360deg);
+      box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7), 0 12px 24px rgba(232, 91, 153, 0.18);
+      position: relative;
+    }
+
+    .draw-wheel.spin {
+      animation: wheelSpin 1080ms cubic-bezier(.16, .78, .24, 1) both;
+    }
+
+    .wheel-label {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 48px;
+      color: #fff;
+      font-size: 10px;
+      font-weight: 900;
+      text-align: center;
+      transform-origin: 0 0;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.32);
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+
+    .wheel-center {
+      position: absolute;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--cream);
+      border: 1px solid var(--line);
+      display: grid;
+      place-items: center;
+      color: var(--red);
+      font-weight: 900;
+      z-index: 1;
+    }
+
+    .flip-grid {
+      width: min(100%, 300px);
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 8px;
+    }
+
+    .flip-card {
+      min-height: 54px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      background: linear-gradient(135deg, #ff9bc5, #ffd2e3);
+      font-size: 13px;
+      font-weight: 900;
+      text-align: center;
+      transform: rotateY(180deg) scale(.95);
+      opacity: .88;
+      transition: transform 420ms ease, background 240ms ease, box-shadow 240ms ease, opacity 240ms ease;
+      padding: 8px;
+      overflow-wrap: anywhere;
+    }
+
+    .flip-card.show {
+      transform: rotateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .flip-card.win {
+      background: linear-gradient(135deg, #ff74aa, #ffd7e6);
+      box-shadow: 0 12px 22px rgba(232, 91, 153, 0.22);
+    }
+
+    .slot-window {
+      width: min(100%, 300px);
+      height: 98px;
+      border-radius: 20px;
+      border: 1px solid var(--line);
+      background: var(--cream);
+      overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 12px 26px rgba(0, 0, 0, 0.05);
+    }
+
+    .slot-window::before,
+    .slot-window::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      width: 100%;
+      height: 28px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .slot-window::before {
+      top: 0;
+      background: linear-gradient(var(--panel), transparent);
+    }
+
+    .slot-window::after {
+      bottom: 0;
+      background: linear-gradient(transparent, var(--panel));
+    }
+
+    .slot-track {
+      display: grid;
+      gap: 8px;
+      padding: 10px;
+      animation: slotMove 920ms cubic-bezier(.18, .84, .28, 1) both;
+    }
+
+    .slot-item {
+      min-height: 32px;
+      display: grid;
+      place-items: center;
+      border-radius: 999px;
+      color: var(--ink);
+      background: #fff5fa;
+      border: 1px solid var(--tag-line);
+      font-weight: 800;
+    }
+
+    .soup-section {
+      position: sticky;
+      top: 18px;
+    }
+
+    .soup-section .section-index {
+      background: var(--green);
+    }
+
+    .soup-showcase {
+      min-height: 260px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .soup-pot {
+      min-height: 294px;
+      display: grid;
+      gap: 10px;
+      padding: 16px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(145deg, rgba(255, 164, 202, 0.24), transparent 60%),
+        var(--panel-soft);
+      text-align: center;
+    }
+
+    .soup-name {
+      min-height: 42px;
+      font-size: clamp(25px, 4vw, 36px);
+      line-height: 1.16;
+      font-weight: 900;
+      color: var(--red-dark);
+    }
+
+    .soup-copy {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .history {
+      margin-top: 2px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .history-title {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .history-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 30px;
+    }
+
+    .prize-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(255, 226, 239, 0.55);
+      backdrop-filter: blur(6px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 180ms ease;
+    }
+
+    .prize-modal.show {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .prize-card {
+      width: min(360px, 100%);
+      padding: 24px;
+      border-radius: 28px;
+      border: 1px solid #ffc6dc;
+      background:
+        linear-gradient(145deg, rgba(255, 228, 239, 0.86), transparent 55%),
+        #fffafd;
+      box-shadow: 0 22px 52px rgba(232, 91, 153, 0.22);
+      text-align: center;
+      transform: translateY(14px) scale(.94);
+      transition: transform 240ms cubic-bezier(.2, .9, .22, 1.2);
+    }
+
+    .prize-modal.show .prize-card {
+      transform: translateY(0) scale(1);
+      animation: modalWiggle 520ms ease 120ms;
+    }
+
+    .prize-kicker {
+      margin: 0 0 8px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .prize-name {
+      margin: 0;
+      color: var(--red-dark);
+      font-size: 34px;
+      line-height: 1.18;
+      font-weight: 900;
+      overflow-wrap: anywhere;
+    }
+
+    .prize-note {
+      margin: 12px 0 18px;
+      color: #ad7190;
+      font-size: 14px;
+    }
+
+    .prize-close {
+      min-height: 40px;
+      min-width: 116px;
+      border-radius: 999px;
+      color: #fff;
+      background: linear-gradient(135deg, #ff7eb4, #ffc1da);
+      font-weight: 900;
+      box-shadow: 0 10px 20px rgba(232, 91, 153, 0.18);
+    }
+
+    @keyframes rollText {
+      0% { transform: translateY(-2px); opacity: .65; }
+      50% { transform: translateY(2px); opacity: 1; }
+      100% { transform: translateY(-2px); opacity: .65; }
+    }
+
+    @keyframes popResult {
+      0% { transform: scale(.94); }
+      62% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes softHop {
+      0% { transform: translateY(0) scale(1); }
+      42% { transform: translateY(-4px) scale(1.025); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    @keyframes modalWiggle {
+      0% { transform: rotate(0deg) scale(1); }
+      35% { transform: rotate(-1.4deg) scale(1.02); }
+      70% { transform: rotate(1.2deg) scale(1.01); }
+      100% { transform: rotate(0deg) scale(1); }
+    }
+
+    @keyframes wheelSpin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(var(--spin, 1680deg)); }
+    }
+
+    @keyframes slotMove {
+      from { transform: translateY(-210px); }
+      to { transform: translateY(-10px); }
+    }
+
+    @media (max-width: 900px) {
+      .topbar,
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions {
+        justify-content: flex-start;
+      }
+
+      .soup-section {
+        position: static;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        width: min(100% - 22px, 1180px);
+        padding-top: 18px;
+      }
+
+      .brand {
+        align-items: flex-start;
+      }
+
+      .brand-mark {
+        width: 42px;
+        height: 42px;
+        flex-basis: 42px;
+      }
+
+      .section-head,
+      .section-body {
+        padding-left: 16px;
+        padding-right: 16px;
+      }
+
+      .chooser-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .custom-row {
+        grid-template-columns: 1fr;
+      }
+
+      .action-btn,
+      .mode-switch {
+        width: 100%;
+      }
+
+      .mode-btn {
+        min-width: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">食</div>
+        <div>
+          <h1>小太阳菜单</h1>
+          <p class="subtitle">地方菜、日常简餐、汤品搭配分区抽签，点一下就决定。</p>
+        </div>
+      </div>
+      <div class="quick-actions">
+        <div class="mode-switch" aria-label="抽签动画模式">
+          <button class="mode-btn active" type="button" data-mode="wheel">转盘</button>
+          <button class="mode-btn" type="button" data-mode="cards">翻牌</button>
+          <button class="mode-btn" type="button" data-mode="roll">滚动</button>
+        </div>
+        <button class="action-btn" id="clearHistoryBtn" type="button">清空记录</button>
+      </div>
+    </header>
+
+    <div class="layout">
+      <div class="main-column">
+        <section class="section" aria-labelledby="breakfastTitle">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title" id="breakfastTitle">早上多少吃点</h2>
+              <p class="section-note">中式早茶、粥粉面点、三明治咖啡、轻食早餐都放在这里。</p>
+            </div>
+            <span class="section-index">1</span>
+          </div>
+          <div class="section-body">
+            <div class="chooser-grid" id="breakfastButtons"></div>
+
+            <div class="custom-row">
+              <input id="breakfastInput" type="text" placeholder="添加到当前早餐分类，多个早餐用逗号分隔">
+              <button class="action-btn secondary" id="addBreakfastBtn" type="button">添加早餐</button>
+            </div>
+
+            <div class="toolbar">
+              <button class="action-btn" id="drawBreakfastBtn" type="button">抽取当前早餐</button>
+              <button class="action-btn secondary" id="drawBreakfastAllBtn" type="button">早餐全分类随机</button>
+            </div>
+
+            <div class="result-box" id="breakfastResultBox" aria-live="polite">
+              <div class="visual-stage" id="breakfastVisual"></div>
+              <span class="result-label">早餐结果</span>
+              <strong class="result-main" id="breakfastResult">等待抽签</strong>
+              <span class="result-meta" id="breakfastMeta">当前分类：中式早餐</span>
+            </div>
+
+            <div class="food-list" id="breakfastPreview"></div>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="cuisineTitle">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title" id="cuisineTitle">地方菜系点菜区</h2>
+              <p class="section-note">选择一个菜系，随机抽取该菜系的一道菜。</p>
+            </div>
+            <span class="section-index">2</span>
+          </div>
+          <div class="section-body">
+            <div class="chooser-grid" id="cuisineButtons"></div>
+
+            <div class="custom-row">
+              <input id="cuisineInput" type="text" placeholder="添加到当前菜系，多个菜名用逗号分隔">
+              <button class="action-btn secondary" id="addCuisineBtn" type="button">添加菜品</button>
+            </div>
+
+            <div class="toolbar">
+              <button class="action-btn" id="drawCuisineBtn" type="button">抽取当前菜系</button>
+              <span class="hint" id="cuisineHint">当前菜系：粤菜</span>
+            </div>
+
+            <div class="result-box" id="cuisineResultBox" aria-live="polite">
+              <div class="visual-stage" id="cuisineVisual"></div>
+              <span class="result-label">地方菜结果</span>
+              <strong class="result-main" id="cuisineResult">等待抽签</strong>
+              <span class="result-meta" id="cuisineMeta">先选菜系，再点击抽取。</span>
+            </div>
+
+            <div class="food-list" id="cuisinePreview"></div>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="dailyTitle">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title" id="dailyTitle">日常简餐区</h2>
+              <p class="section-note">快餐、速食和家常饭面等日常餐食都放在这里。</p>
+            </div>
+            <span class="section-index">3</span>
+          </div>
+          <div class="section-body">
+            <div class="chooser-grid" id="dailyButtons"></div>
+
+            <div class="custom-row">
+              <input id="dailyInput" type="text" placeholder="添加到当前简餐分类，多个菜名用逗号分隔">
+              <button class="action-btn secondary" id="addDailyBtn" type="button">添加简餐</button>
+            </div>
+
+            <div class="toolbar">
+              <button class="action-btn" id="drawDailyBtn" type="button">抽取当前分类</button>
+              <button class="action-btn secondary" id="drawDailyAllBtn" type="button">简餐全分类随机</button>
+            </div>
+
+            <div class="result-box" id="dailyResultBox" aria-live="polite">
+              <div class="visual-stage" id="dailyVisual"></div>
+              <span class="result-label">简餐结果</span>
+              <strong class="result-main" id="dailyResult">等待抽签</strong>
+              <span class="result-meta" id="dailyMeta">当前分类：快餐</span>
+            </div>
+
+            <div class="food-list" id="dailyPreview"></div>
+          </div>
+        </section>
+
+        <section class="section" aria-labelledby="drinkTitle">
+          <div class="section-head">
+            <div>
+              <h2 class="section-title" id="drinkTitle">来一杯吧~</h2>
+              <p class="section-note">主流奶茶店、咖啡店饮品集中抽签，适合饭后或下午茶。</p>
+            </div>
+            <span class="section-index">4</span>
+          </div>
+          <div class="section-body">
+            <div class="chooser-grid" id="drinkButtons"></div>
+
+            <div class="custom-row">
+              <input id="drinkInput" type="text" placeholder="添加到当前饮品品牌，多个饮品用逗号分隔">
+              <button class="action-btn secondary" id="addDrinkBtn" type="button">添加饮品</button>
+            </div>
+
+            <div class="toolbar">
+              <button class="action-btn" id="drawDrinkBtn" type="button">抽取当前品牌</button>
+              <button class="action-btn secondary" id="drawDrinkAllBtn" type="button">饮品全品牌随机</button>
+            </div>
+
+            <div class="result-box" id="drinkResultBox" aria-live="polite">
+              <div class="visual-stage" id="drinkVisual"></div>
+              <span class="result-label">饮品结果</span>
+              <strong class="result-main" id="drinkResult">等待抽签</strong>
+              <span class="result-meta" id="drinkMeta">当前品牌：喜茶</span>
+            </div>
+
+            <div class="food-list" id="drinkPreview"></div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="section soup-section" aria-labelledby="soupTitle">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title" id="soupTitle">汤品专区</h2>
+            <p class="section-note">单独抽一款汤，搭配正餐更完整。</p>
+          </div>
+          <span class="section-index">5</span>
+        </div>
+        <div class="section-body soup-showcase">
+          <div class="custom-row">
+            <input id="soupInput" type="text" placeholder="添加汤品，多个汤名用逗号分隔">
+            <button class="action-btn secondary" id="addSoupBtn" type="button">添加汤品</button>
+          </div>
+
+          <div class="soup-pot" id="soupResultBox" aria-live="polite">
+            <div class="visual-stage" id="soupVisual"></div>
+            <strong class="soup-name" id="soupResult">等待抽汤</strong>
+            <p class="soup-copy" id="soupMeta">荤汤、素汤、羹汤、靓汤混合随机，也可以只用它来补一个搭配。</p>
+          </div>
+
+          <button class="action-btn soup" id="drawSoupBtn" type="button">抽一款汤</button>
+          <div class="food-list" id="soupPreview"></div>
+
+          <div class="history">
+            <p class="history-title">最近抽签记录</p>
+            <div class="history-list" id="historyList"></div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+
+  <div class="prize-modal" id="prizeModal" aria-live="polite" aria-hidden="true">
+    <div class="prize-card" role="dialog" aria-modal="true" aria-labelledby="prizeName">
+      <p class="prize-kicker" id="prizeKicker">抽签结果</p>
+      <h2 class="prize-name" id="prizeName">等待揭晓</h2>
+      <p class="prize-note" id="prizeNote">今天就选这个吧。</p>
+      <button class="prize-close" id="prizeCloseBtn" type="button">收下</button>
+    </div>
+  </div>
+
+  <script>
+    // 默认菜单。新增内容会写入 localStorage，仍然是纯前端单文件运行。
+    const defaultBreakfastMenus = {
+      "中式早餐": ["豆浆油条", "小笼包", "煎饼果子", "鸡蛋灌饼", "烧麦", "茶叶蛋配粥", "肠粉", "锅贴"],
+      "粥粉面点": ["皮蛋瘦肉粥", "艇仔粥", "热干面", "重庆小面", "云吞面", "汤粉", "葱油拌面", "鲜肉馄饨"],
+      "西式早餐": ["培根煎蛋", "牛角包", "火腿芝士三明治", "全麦吐司", "班尼迪克蛋", "华夫饼", "贝果", "酸奶麦片"],
+      "轻食早餐": ["牛油果吐司", "鸡胸肉沙拉", "水果酸奶碗", "燕麦粥", "玉米鸡蛋杯", "紫薯牛奶", "低脂三明治", "蔬菜蛋卷"],
+      "快手早餐": ["饭团", "便利店三明治", "包子配豆浆", "速冻蒸饺", "手抓饼", "即食燕麦", "牛奶面包", "香蕉酸奶"]
+    };
+
+    const defaultCuisineMenus = {
+      "粤菜": ["白切鸡", "烧鹅", "蜜汁叉烧", "豉汁蒸排骨", "清蒸鲈鱼", "干炒牛河", "虾饺", "啫啫鸡煲"],
+      "鲁菜": ["九转大肠", "糖醋鲤鱼", "葱烧海参", "德州扒鸡", "锅塌豆腐", "油爆双脆", "四喜丸子", "爆炒腰花"],
+      "川菜": ["水煮牛肉", "麻婆豆腐", "回锅肉", "宫保鸡丁", "鱼香肉丝", "辣子鸡", "酸菜鱼", "夫妻肺片"],
+      "湘菜": ["剁椒鱼头", "小炒黄牛肉", "辣椒炒肉", "口味虾", "外婆菜炒蛋", "毛氏红烧肉", "腊味合蒸", "干锅肥肠"],
+      "苏菜": ["松鼠桂鱼", "盐水鸭", "蟹粉狮子头", "响油鳝糊", "大煮干丝", "无锡排骨", "扬州炒饭", "清炖蟹粉狮子头"],
+      "浙菜": ["东坡肉", "西湖醋鱼", "龙井虾仁", "宋嫂鱼羹", "干炸响铃", "梅干菜扣肉", "油焖春笋", "雪菜大黄鱼"],
+      "闽菜": ["佛跳墙", "荔枝肉", "沙茶面", "醉排骨", "海蛎煎", "鸡汤汆海蚌", "爆炒双脆", "鱼丸汤"],
+      "徽菜": ["臭鳜鱼", "毛豆腐", "黄山炖鸽", "问政山笋", "胡适一品锅", "徽州圆子", "腌鲜鳜鱼", "刀板香"]
+    };
+
+    const defaultDailyMenus = {
+      "快餐": ["黄焖鸡米饭", "猪脚饭", "盖浇饭", "卤肉饭", "汉堡套餐", "炸鸡饭", "轻食沙拉", "便当拼盘"],
+      "泡面速食": ["红烧牛肉面", "酸辣粉", "螺蛳粉", "自热火锅", "火鸡面", "麻辣烫速食", "拌面", "乌冬面"],
+      "家常饭面": ["蛋炒饭", "番茄鸡蛋面", "青椒肉丝饭", "肉末茄子饭", "牛肉炒面", "葱油拌面", "炒河粉", "饺子"],
+      "清淡一点": ["鸡丝粥", "蔬菜汤面", "蒸蛋配饭", "白灼时蔬饭", "菌菇面", "虾仁粥", "豆腐盖饭", "云吞面"]
+    };
+
+    const defaultSoupMenus = [
+      "玉米排骨汤", "冬瓜老鸭汤", "番茄牛腩汤", "紫菜蛋花汤", "菌菇鸡汤", "萝卜牛骨汤",
+      "莲藕花生猪骨汤", "海带豆腐汤", "西湖牛肉羹", "酸辣汤", "银耳莲子羹", "鲫鱼豆腐汤",
+      "虫草花鸡汤", "山药排骨汤", "丝瓜蛋汤", "竹荪老鸡汤", "胡椒猪肚汤", "罗宋汤"
+    ];
+
+    const defaultDrinkMenus = {
+      "喜茶": ["多肉葡萄", "芝芝莓莓", "烤黑糖波波牛乳", "轻芝多肉桃李", "满杯红柚", "鸭屎香柠檬茶"],
+      "奈雪的茶": ["霸气芝士草莓", "霸气橙子", "霸气葡萄", "鸭屎香宝藏茶", "茉莉初雪奶茶", "金色山脉鲜奶茶"],
+      "霸王茶姬": ["伯牙绝弦", "万里木兰", "桂馥兰香", "青青糯山", "花田乌龙", "醒时春山"],
+      "茶百道": ["豆乳玉麒麟", "杨枝甘露", "超级杯水果茶", "茉莉奶绿", "招牌芋圆奶茶", "葡萄冻冻"],
+      "沪上阿姨": ["血糯米奶茶", "浅浅清茉", "桃桃酸奶昔", "杨枝甘露", "厚芋泥波波奶茶", "柠檬红茶"],
+      "CoCo都可": ["珍珠奶茶", "鲜芋青稞牛奶", "百香双响炮", "奶茶三兄弟", "柠檬霸", "红果小姐姐"],
+      "一点点": ["四季春玛奇朵", "波霸奶茶", "阿华田", "冰淇淋红茶", "柠檬养乐多", "燕麦奶茶"],
+      "蜜雪冰城": ["冰鲜柠檬水", "棒打鲜橙", "珍珠奶茶", "满杯百香果", "芝士奶盖四季春", "草莓摇摇奶昔"],
+      "星巴克": ["拿铁", "美式咖啡", "焦糖玛奇朵", "馥芮白", "冷萃咖啡", "抹茶星冰乐"],
+      "瑞幸咖啡": ["生椰拿铁", "厚乳拿铁", "丝绒拿铁", "陨石拿铁", "橙C美式", "酱香拿铁"],
+      "库迪咖啡": ["米乳拿铁", "生椰拿铁", "燕麦拿铁", "厚乳拿铁", "美式咖啡", "柚C冰茶"],
+      "Manner": ["澳白", "拿铁", "美式咖啡", "Dirty", "冷萃咖啡", "桂花拿铁"]
+    };
+
+    const storageKeys = {
+      breakfast: "foodDrawBreakfastMenus",
+      cuisine: "foodDrawCuisineMenus",
+      daily: "foodDrawDailyMenus",
+      soup: "foodDrawSoupMenus",
+      drink: "foodDrawDrinkMenus",
+      mode: "foodDrawMode"
+    };
+
+    const clone = (value) => JSON.parse(JSON.stringify(value));
+    const $ = (selector) => document.querySelector(selector);
+
+    function loadStore(key, fallback) {
+      try {
+        const saved = localStorage.getItem(key);
+        return saved ? JSON.parse(saved) : clone(fallback);
+      } catch {
+        return clone(fallback);
+      }
+    }
+
+    let breakfastMenus = loadStore(storageKeys.breakfast, defaultBreakfastMenus);
+    let cuisineMenus = loadStore(storageKeys.cuisine, defaultCuisineMenus);
+    let dailyMenus = loadStore(storageKeys.daily, defaultDailyMenus);
+    let soupMenus = loadStore(storageKeys.soup, defaultSoupMenus);
+    let drinkMenus = loadStore(storageKeys.drink, defaultDrinkMenus);
+    delete dailyMenus["街边小吃"];
+    if (!Object.keys(dailyMenus).length) {
+      dailyMenus = clone(defaultDailyMenus);
+    }
+
+    const state = {
+      breakfast: Object.keys(breakfastMenus)[0],
+      cuisine: Object.keys(cuisineMenus)[0],
+      daily: Object.keys(dailyMenus)[0],
+      drink: Object.keys(drinkMenus)[0],
+      mode: localStorage.getItem(storageKeys.mode) || "wheel",
+      history: [],
+      timers: new Map()
+    };
+
+    const elements = {
+      breakfastButtons: $("#breakfastButtons"),
+      cuisineButtons: $("#cuisineButtons"),
+      dailyButtons: $("#dailyButtons"),
+      drinkButtons: $("#drinkButtons"),
+      breakfastPreview: $("#breakfastPreview"),
+      cuisinePreview: $("#cuisinePreview"),
+      dailyPreview: $("#dailyPreview"),
+      drinkPreview: $("#drinkPreview"),
+      soupPreview: $("#soupPreview"),
+      breakfastResult: $("#breakfastResult"),
+      breakfastMeta: $("#breakfastMeta"),
+      breakfastResultBox: $("#breakfastResultBox"),
+      breakfastVisual: $("#breakfastVisual"),
+      cuisineHint: $("#cuisineHint"),
+      cuisineResult: $("#cuisineResult"),
+      cuisineMeta: $("#cuisineMeta"),
+      cuisineResultBox: $("#cuisineResultBox"),
+      cuisineVisual: $("#cuisineVisual"),
+      dailyResult: $("#dailyResult"),
+      dailyMeta: $("#dailyMeta"),
+      dailyResultBox: $("#dailyResultBox"),
+      dailyVisual: $("#dailyVisual"),
+      drinkResult: $("#drinkResult"),
+      drinkMeta: $("#drinkMeta"),
+      drinkResultBox: $("#drinkResultBox"),
+      drinkVisual: $("#drinkVisual"),
+      soupResult: $("#soupResult"),
+      soupMeta: $("#soupMeta"),
+      soupResultBox: $("#soupResultBox"),
+      soupVisual: $("#soupVisual"),
+      historyList: $("#historyList"),
+      breakfastInput: $("#breakfastInput"),
+      cuisineInput: $("#cuisineInput"),
+      dailyInput: $("#dailyInput"),
+      drinkInput: $("#drinkInput"),
+      soupInput: $("#soupInput"),
+      prizeModal: $("#prizeModal"),
+      prizeKicker: $("#prizeKicker"),
+      prizeName: $("#prizeName"),
+      prizeNote: $("#prizeNote"),
+      prizeCloseBtn: $("#prizeCloseBtn")
+    };
+
+    function randomItem(list) {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+
+    function createTag(text) {
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      tag.textContent = text;
+      return tag;
+    }
+
+    function createEditableTag(text, onDelete) {
+      const tag = document.createElement("span");
+      tag.className = "tag";
+      const label = document.createElement("span");
+      label.textContent = text;
+      const removeButton = document.createElement("button");
+      removeButton.className = "remove-tag";
+      removeButton.type = "button";
+      removeButton.textContent = "×";
+      removeButton.setAttribute("aria-label", `删除${text}`);
+      removeButton.addEventListener("click", () => onDelete(text));
+      tag.append(label, removeButton);
+      return tag;
+    }
+
+    function renderTags(container, list, onDelete) {
+      const tags = onDelete
+        ? list.map((item) => createEditableTag(item, onDelete))
+        : list.map(createTag);
+      container.replaceChildren(...tags);
+    }
+
+    function setActiveButton(container, value) {
+      container.querySelectorAll(".choice-btn").forEach((button) => {
+        button.classList.toggle("active", button.dataset.value === value);
+      });
+    }
+
+    function buildChoiceButtons(container, data, onChoose) {
+      const buttons = Object.keys(data).map((name) => {
+        const button = document.createElement("button");
+        button.className = "choice-btn";
+        button.type = "button";
+        button.dataset.value = name;
+        button.textContent = name;
+        return button;
+      });
+
+      container.replaceChildren(...buttons);
+      container.onclick = (event) => {
+        const button = event.target.closest(".choice-btn");
+        if (!button) return;
+        onChoose(button.dataset.value);
+      };
+    }
+
+    function addHistory(text) {
+      state.history.unshift(text);
+      state.history = state.history.slice(0, 8);
+      renderHistory();
+    }
+
+    function renderHistory() {
+      if (!state.history.length) {
+        elements.historyList.replaceChildren(createTag("暂无记录"));
+        return;
+      }
+      elements.historyList.replaceChildren(...state.history.map(createTag));
+    }
+
+    function showPrizeModal(kicker, name, note) {
+      elements.prizeKicker.textContent = kicker;
+      elements.prizeName.textContent = name;
+      elements.prizeNote.textContent = note;
+      elements.prizeModal.classList.add("show");
+      elements.prizeModal.setAttribute("aria-hidden", "false");
+    }
+
+    function hidePrizeModal() {
+      elements.prizeModal.classList.remove("show");
+      elements.prizeModal.setAttribute("aria-hidden", "true");
+    }
+
+    function parseItems(value) {
+      return value
+        .split(/[\n,，、;；]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function addUniqueItems(list, items) {
+      const added = [];
+      items.forEach((item) => {
+        if (!list.includes(item)) {
+          list.push(item);
+          added.push(item);
+        }
+      });
+      return added;
+    }
+
+    function removeItemFromList(list, item) {
+      if (list.length <= 1) {
+        return false;
+      }
+      const index = list.indexOf(item);
+      if (index === -1) {
+        return false;
+      }
+      list.splice(index, 1);
+      saveMenus();
+      return true;
+    }
+
+    function removeFromBreakfast(item) {
+      const removed = removeItemFromList(breakfastMenus[state.breakfast], item);
+      renderBreakfastPreview();
+      elements.breakfastMeta.textContent = removed
+        ? `已从${state.breakfast}删除：${item}`
+        : "每个早餐分类至少要保留 1 个选项。";
+    }
+
+    function removeFromCuisine(item) {
+      const removed = removeItemFromList(cuisineMenus[state.cuisine], item);
+      renderCuisinePreview();
+      elements.cuisineMeta.textContent = removed
+        ? `已从${state.cuisine}删除：${item}`
+        : "每个菜系至少要保留 1 个菜品。";
+    }
+
+    function removeFromDaily(item) {
+      const removed = removeItemFromList(dailyMenus[state.daily], item);
+      renderDailyPreview();
+      elements.dailyMeta.textContent = removed
+        ? `已从${state.daily}删除：${item}`
+        : "每个简餐分类至少要保留 1 个选项。";
+    }
+
+    function removeFromDrink(item) {
+      const removed = removeItemFromList(drinkMenus[state.drink], item);
+      renderDrinkPreview();
+      elements.drinkMeta.textContent = removed
+        ? `已从${state.drink}删除：${item}`
+        : "每个饮品品牌至少要保留 1 个饮品。";
+    }
+
+    function removeFromSoup(item) {
+      const removed = removeItemFromList(soupMenus, item);
+      renderSoupPreview();
+      elements.soupMeta.textContent = removed
+        ? `已删除汤品：${item}`
+        : "汤品列表至少要保留 1 个选项。";
+    }
+
+    function renderBreakfastPreview() {
+      renderTags(elements.breakfastPreview, breakfastMenus[state.breakfast], removeFromBreakfast);
+    }
+
+    function renderCuisinePreview() {
+      renderTags(elements.cuisinePreview, cuisineMenus[state.cuisine], removeFromCuisine);
+    }
+
+    function renderDailyPreview() {
+      renderTags(elements.dailyPreview, dailyMenus[state.daily], removeFromDaily);
+    }
+
+    function renderDrinkPreview() {
+      renderTags(elements.drinkPreview, drinkMenus[state.drink], removeFromDrink);
+    }
+
+    function renderSoupPreview() {
+      renderTags(elements.soupPreview, soupMenus, removeFromSoup);
+    }
+
+    function saveMenus() {
+      localStorage.setItem(storageKeys.breakfast, JSON.stringify(breakfastMenus));
+      localStorage.setItem(storageKeys.cuisine, JSON.stringify(cuisineMenus));
+      localStorage.setItem(storageKeys.daily, JSON.stringify(dailyMenus));
+      localStorage.setItem(storageKeys.soup, JSON.stringify(soupMenus));
+      localStorage.setItem(storageKeys.drink, JSON.stringify(drinkMenus));
+    }
+
+    function clearStageTimers(stage) {
+      const timers = state.timers.get(stage.id) || [];
+      timers.forEach((timer) => {
+        clearTimeout(timer);
+        clearInterval(timer);
+      });
+      state.timers.set(stage.id, []);
+    }
+
+    function trackTimer(stage, timer) {
+      const timers = state.timers.get(stage.id) || [];
+      timers.push(timer);
+      state.timers.set(stage.id, timers);
+    }
+
+    function preparePool(list, finalValue, size = 8) {
+      const unique = [...new Set(list)];
+      const shuffled = unique.sort(() => Math.random() - 0.5).slice(0, size);
+      if (!shuffled.includes(finalValue)) {
+        shuffled[Math.floor(Math.random() * shuffled.length)] = finalValue;
+      }
+      return shuffled;
+    }
+
+    function renderWheel(stage, list, finalValue) {
+      clearStageTimers(stage);
+      stage.className = "visual-stage";
+      const pool = preparePool(list, finalValue, 8);
+      const wrap = document.createElement("div");
+      wrap.className = "wheel-wrap";
+      const pointer = document.createElement("div");
+      pointer.className = "wheel-pointer";
+      const wheel = document.createElement("div");
+      wheel.className = "draw-wheel";
+      wheel.style.setProperty("--spin", `${1440 + Math.floor(Math.random() * 360)}deg`);
+
+      pool.forEach((name, index) => {
+        const label = document.createElement("span");
+        label.className = "wheel-label";
+        label.textContent = name;
+        label.style.transform = `rotate(${index * 45 + 22}deg) translate(18px, -6px)`;
+        wheel.appendChild(label);
+      });
+
+      const center = document.createElement("div");
+      center.className = "wheel-center";
+      center.textContent = "抽";
+      wrap.append(pointer, wheel, center);
+      stage.replaceChildren(wrap);
+      requestAnimationFrame(() => wheel.classList.add("spin"));
+    }
+
+    function renderCards(stage, list, finalValue) {
+      clearStageTimers(stage);
+      stage.className = "visual-stage";
+      const pool = preparePool(list, finalValue, 6);
+      const grid = document.createElement("div");
+      grid.className = "flip-grid";
+
+      pool.forEach((name, index) => {
+        const card = document.createElement("div");
+        card.className = "flip-card";
+        card.textContent = name;
+        grid.appendChild(card);
+        trackTimer(stage, setTimeout(() => card.classList.add("show"), 90 * index + 120));
+        if (name === finalValue) {
+          trackTimer(stage, setTimeout(() => card.classList.add("win"), 850));
+        }
+      });
+
+      stage.replaceChildren(grid);
+    }
+
+    function renderSlot(stage, list, finalValue) {
+      clearStageTimers(stage);
+      stage.className = "visual-stage";
+      const pool = Array.from({ length: 8 }, () => randomItem(list));
+      pool.push(finalValue);
+
+      const windowEl = document.createElement("div");
+      windowEl.className = "slot-window";
+      const track = document.createElement("div");
+      track.className = "slot-track";
+
+      pool.forEach((name) => {
+        const item = document.createElement("div");
+        item.className = "slot-item";
+        item.textContent = name;
+        track.appendChild(item);
+      });
+
+      windowEl.appendChild(track);
+      stage.replaceChildren(windowEl);
+    }
+
+    function renderVisual(stage, list, finalValue) {
+      if (state.mode === "cards") {
+        renderCards(stage, list, finalValue);
+        return;
+      }
+      if (state.mode === "roll") {
+        renderSlot(stage, list, finalValue);
+        return;
+      }
+      renderWheel(stage, list, finalValue);
+    }
+
+    // 通用抽签逻辑：结果文字滚动，动画区按当前模式展示转盘、翻牌或滚动槽。
+    function drawWithEffect({ list, target, box, stage, onStart, onFinish, duration = 1120 }) {
+      const finalValue = randomItem(list);
+      const start = Date.now();
+      onStart();
+      renderVisual(stage, list, finalValue);
+      box.classList.remove("finished");
+      box.classList.add("rolling");
+
+      const timer = setInterval(() => {
+        target.textContent = randomItem(list);
+        if (Date.now() - start >= duration) {
+          clearInterval(timer);
+          target.textContent = finalValue;
+          box.classList.remove("rolling");
+          box.classList.add("finished");
+          onFinish(finalValue);
+        }
+      }, 76);
+    }
+
+    function drawBreakfast(useAll = false) {
+      const sourceList = useAll ? Object.values(breakfastMenus).flat() : breakfastMenus[state.breakfast];
+      const label = useAll ? "早餐全分类" : state.breakfast;
+      drawWithEffect({
+        list: sourceList,
+        target: elements.breakfastResult,
+        box: elements.breakfastResultBox,
+        stage: elements.breakfastVisual,
+        onStart: () => {
+          elements.breakfastMeta.textContent = `${label}正在抽签中...`;
+        },
+        onFinish: (dish) => {
+          elements.breakfastMeta.textContent = `分类：${label}`;
+          addHistory(`${label}：${dish}`);
+          showPrizeModal(`${label}抽签结果`, dish, "今天从一份暖暖早餐开始。");
+        }
+      });
+    }
+
+    function drawCuisine() {
+      const list = cuisineMenus[state.cuisine];
+      drawWithEffect({
+        list,
+        target: elements.cuisineResult,
+        box: elements.cuisineResultBox,
+        stage: elements.cuisineVisual,
+        onStart: () => {
+          elements.cuisineMeta.textContent = `${state.cuisine}正在抽签中...`;
+        },
+        onFinish: (dish) => {
+          elements.cuisineMeta.textContent = `来自${state.cuisine}，可以作为今天的正餐。`;
+          addHistory(`${state.cuisine}：${dish}`);
+          showPrizeModal(`${state.cuisine}抽签结果`, dish, "今天的正餐就被温柔决定啦。");
+        }
+      });
+    }
+
+    function drawDaily(useAll = false) {
+      const sourceList = useAll ? Object.values(dailyMenus).flat() : dailyMenus[state.daily];
+      const label = useAll ? "日常简餐全分类" : state.daily;
+      drawWithEffect({
+        list: sourceList,
+        target: elements.dailyResult,
+        box: elements.dailyResultBox,
+        stage: elements.dailyVisual,
+        onStart: () => {
+          elements.dailyMeta.textContent = `${label}正在抽签中...`;
+        },
+        onFinish: (dish) => {
+          elements.dailyMeta.textContent = `分类：${label}`;
+          addHistory(`${label}：${dish}`);
+          showPrizeModal(`${label}抽签结果`, dish, "轻松一点，也可以吃得很开心。");
+        }
+      });
+    }
+
+    function drawDrink(useAll = false) {
+      const sourceList = useAll ? Object.values(drinkMenus).flat() : drinkMenus[state.drink];
+      const label = useAll ? "饮品全品牌" : state.drink;
+      drawWithEffect({
+        list: sourceList,
+        target: elements.drinkResult,
+        box: elements.drinkResultBox,
+        stage: elements.drinkVisual,
+        onStart: () => {
+          elements.drinkMeta.textContent = `${label}正在抽签中...`;
+        },
+        onFinish: (drink) => {
+          elements.drinkMeta.textContent = `品牌：${label}`;
+          addHistory(`${label}：${drink}`);
+          showPrizeModal(`${label}抽签结果`, drink, "配一杯甜甜饮品，今天更柔软。");
+        }
+      });
+    }
+
+    function drawSoup() {
+      drawWithEffect({
+        list: soupMenus,
+        target: elements.soupResult,
+        box: elements.soupResultBox,
+        stage: elements.soupVisual,
+        duration: 980,
+        onStart: () => {
+          elements.soupMeta.textContent = "汤品正在抽签中...";
+        },
+        onFinish: (soup) => {
+          elements.soupMeta.textContent = `${soup}适合搭配米饭、面条或地方菜。`;
+          addHistory(`汤品：${soup}`);
+          showPrizeModal("汤品抽签结果", soup, "暖暖一碗，刚好搭配这一餐。");
+        }
+      });
+    }
+
+    function addToBreakfast() {
+      const items = parseItems(elements.breakfastInput.value);
+      const added = addUniqueItems(breakfastMenus[state.breakfast], items);
+      elements.breakfastInput.value = "";
+      saveMenus();
+      renderBreakfastPreview();
+      elements.breakfastMeta.textContent = added.length
+        ? `已添加到${state.breakfast}：${added.join("、")}`
+        : "没有新增早餐，可能为空或已经存在。";
+    }
+
+    function addToCuisine() {
+      const items = parseItems(elements.cuisineInput.value);
+      const added = addUniqueItems(cuisineMenus[state.cuisine], items);
+      elements.cuisineInput.value = "";
+      saveMenus();
+      renderCuisinePreview();
+      elements.cuisineMeta.textContent = added.length
+        ? `已添加到${state.cuisine}：${added.join("、")}`
+        : "没有新增菜品，可能为空或已经存在。";
+    }
+
+    function addToDaily() {
+      const items = parseItems(elements.dailyInput.value);
+      const added = addUniqueItems(dailyMenus[state.daily], items);
+      elements.dailyInput.value = "";
+      saveMenus();
+      renderDailyPreview();
+      elements.dailyMeta.textContent = added.length
+        ? `已添加到${state.daily}：${added.join("、")}`
+        : "没有新增简餐，可能为空或已经存在。";
+    }
+
+    function addToDrink() {
+      const items = parseItems(elements.drinkInput.value);
+      const added = addUniqueItems(drinkMenus[state.drink], items);
+      elements.drinkInput.value = "";
+      saveMenus();
+      renderDrinkPreview();
+      elements.drinkMeta.textContent = added.length
+        ? `已添加到${state.drink}：${added.join("、")}`
+        : "没有新增饮品，可能为空或已经存在。";
+    }
+
+    function addToSoup() {
+      const items = parseItems(elements.soupInput.value);
+      const added = addUniqueItems(soupMenus, items);
+      elements.soupInput.value = "";
+      saveMenus();
+      renderSoupPreview();
+      elements.soupMeta.textContent = added.length
+        ? `已添加汤品：${added.join("、")}`
+        : "没有新增汤品，可能为空或已经存在。";
+    }
+
+    function setMode(mode) {
+      state.mode = mode;
+      localStorage.setItem(storageKeys.mode, mode);
+      document.querySelectorAll(".mode-btn").forEach((button) => {
+        button.classList.toggle("active", button.dataset.mode === mode);
+      });
+      const breakfastValue = breakfastMenus[state.breakfast].includes(elements.breakfastResult.textContent)
+        ? elements.breakfastResult.textContent
+        : randomItem(breakfastMenus[state.breakfast]);
+      const cuisineValue = cuisineMenus[state.cuisine].includes(elements.cuisineResult.textContent)
+        ? elements.cuisineResult.textContent
+        : randomItem(cuisineMenus[state.cuisine]);
+      const dailyValue = dailyMenus[state.daily].includes(elements.dailyResult.textContent)
+        ? elements.dailyResult.textContent
+        : randomItem(dailyMenus[state.daily]);
+      const drinkValue = drinkMenus[state.drink].includes(elements.drinkResult.textContent)
+        ? elements.drinkResult.textContent
+        : randomItem(drinkMenus[state.drink]);
+      const soupValue = soupMenus.includes(elements.soupResult.textContent)
+        ? elements.soupResult.textContent
+        : randomItem(soupMenus);
+      renderVisual(elements.breakfastVisual, breakfastMenus[state.breakfast], breakfastValue);
+      renderVisual(elements.cuisineVisual, cuisineMenus[state.cuisine], cuisineValue);
+      renderVisual(elements.dailyVisual, dailyMenus[state.daily], dailyValue);
+      renderVisual(elements.drinkVisual, drinkMenus[state.drink], drinkValue);
+      renderVisual(elements.soupVisual, soupMenus, soupValue);
+    }
+
+    function init() {
+      buildChoiceButtons(elements.breakfastButtons, breakfastMenus, (value) => {
+        state.breakfast = value;
+        setActiveButton(elements.breakfastButtons, value);
+        elements.breakfastMeta.textContent = `当前分类：${value}`;
+        renderBreakfastPreview();
+        renderVisual(elements.breakfastVisual, breakfastMenus[value], randomItem(breakfastMenus[value]));
+      });
+
+      buildChoiceButtons(elements.cuisineButtons, cuisineMenus, (value) => {
+        state.cuisine = value;
+        setActiveButton(elements.cuisineButtons, value);
+        elements.cuisineHint.textContent = `当前菜系：${value}`;
+        elements.cuisineMeta.textContent = `已切换到${value}，点击按钮开始抽取。`;
+        renderCuisinePreview();
+        renderVisual(elements.cuisineVisual, cuisineMenus[value], randomItem(cuisineMenus[value]));
+      });
+
+      buildChoiceButtons(elements.dailyButtons, dailyMenus, (value) => {
+        state.daily = value;
+        setActiveButton(elements.dailyButtons, value);
+        elements.dailyMeta.textContent = `当前分类：${value}`;
+        renderDailyPreview();
+        renderVisual(elements.dailyVisual, dailyMenus[value], randomItem(dailyMenus[value]));
+      });
+
+      buildChoiceButtons(elements.drinkButtons, drinkMenus, (value) => {
+        state.drink = value;
+        setActiveButton(elements.drinkButtons, value);
+        elements.drinkMeta.textContent = `当前品牌：${value}`;
+        renderDrinkPreview();
+        renderVisual(elements.drinkVisual, drinkMenus[value], randomItem(drinkMenus[value]));
+      });
+
+      setActiveButton(elements.breakfastButtons, state.breakfast);
+      setActiveButton(elements.cuisineButtons, state.cuisine);
+      setActiveButton(elements.dailyButtons, state.daily);
+      setActiveButton(elements.drinkButtons, state.drink);
+      renderBreakfastPreview();
+      renderCuisinePreview();
+      renderDailyPreview();
+      renderDrinkPreview();
+      renderSoupPreview();
+      renderHistory();
+      setMode(state.mode);
+
+      $("#drawBreakfastBtn").addEventListener("click", () => drawBreakfast(false));
+      $("#drawBreakfastAllBtn").addEventListener("click", () => drawBreakfast(true));
+      $("#drawCuisineBtn").addEventListener("click", drawCuisine);
+      $("#drawDailyBtn").addEventListener("click", () => drawDaily(false));
+      $("#drawDailyAllBtn").addEventListener("click", () => drawDaily(true));
+      $("#drawDrinkBtn").addEventListener("click", () => drawDrink(false));
+      $("#drawDrinkAllBtn").addEventListener("click", () => drawDrink(true));
+      $("#drawSoupBtn").addEventListener("click", drawSoup);
+      $("#clearHistoryBtn").addEventListener("click", () => {
+        state.history = [];
+        renderHistory();
+      });
+
+      $("#addBreakfastBtn").addEventListener("click", addToBreakfast);
+      $("#addCuisineBtn").addEventListener("click", addToCuisine);
+      $("#addDailyBtn").addEventListener("click", addToDaily);
+      $("#addDrinkBtn").addEventListener("click", addToDrink);
+      $("#addSoupBtn").addEventListener("click", addToSoup);
+      elements.breakfastInput.addEventListener("keydown", (event) => event.key === "Enter" && addToBreakfast());
+      elements.cuisineInput.addEventListener("keydown", (event) => event.key === "Enter" && addToCuisine());
+      elements.dailyInput.addEventListener("keydown", (event) => event.key === "Enter" && addToDaily());
+      elements.drinkInput.addEventListener("keydown", (event) => event.key === "Enter" && addToDrink());
+      elements.soupInput.addEventListener("keydown", (event) => event.key === "Enter" && addToSoup());
+
+      document.querySelector(".mode-switch").addEventListener("click", (event) => {
+        const button = event.target.closest(".mode-btn");
+        if (button) setMode(button.dataset.mode);
+      });
+
+      elements.prizeCloseBtn.addEventListener("click", hidePrizeModal);
+      elements.prizeModal.addEventListener("click", (event) => {
+        if (event.target === elements.prizeModal) hidePrizeModal();
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>
+
